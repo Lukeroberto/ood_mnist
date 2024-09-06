@@ -4,9 +4,8 @@ Trains an autoencoder to learn a laten space for the MNIST dataset. Will return 
 
 Usage:
 
->> python convert_paint.py /path/to/image/ # if the image is hand-drawn
->> python train.py # train model and save locally
->> python infer.py /path/to/examples /path/to/converted/image # run model inference and return representative or OOD
+>> python train.py num_epochs # train model and save locally
+>> python infer.py /path/to/converted/image # run model inference and return representative or OOD
 
 
 Examples:
