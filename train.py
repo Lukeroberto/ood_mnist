@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from types import SimpleNamespace
 import argparse
 
+# modified from: https://github.com/udacity/deep-learning-v2-pytorch/blob/master/autoencoder/convolutional-autoencoder/Convolutional_Autoencoder_Solution.ipynb
 class Autoencoder(nn.Module):
     def __init__(self):
         super(Autoencoder, self).__init__()
@@ -54,12 +55,15 @@ def train(model, dataloader):
         loss = distance(output, data)
         loss.backward()
         optimizer.step()
-        if batch_idx % 20 == 0:
+        if batch_idx % 50 == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(dataloader.dataset),
                 100. * batch_idx / len(dataloader), loss.item()))
 
-def eval(autoencoder, n_samples=10, save_path="training.png"):
+def eval(autoencoder, n_samples=10, save_path="examples/reconstructions.png"):
+    """
+    Plots reconstructions of images taken from MNIST test dataset.
+    """
     # Set up MNIST test dataset
     transform = transforms.Compose([
         transforms.ToTensor(),
@@ -75,13 +79,8 @@ def eval(autoencoder, n_samples=10, save_path="training.png"):
     autoencoder.eval()
 
     with torch.no_grad():
-        # Get reconstructions
         reconstructions = autoencoder(images)
-
-        # Calculate MSE
-        mse = torch.nn.functional.mse_loss(reconstructions, images)
-
-        # Create the plot
+        mse = distance(reconstructions, images)
         fig, axes = plt.subplots(2, n_samples, figsize=(n_samples * 2, 4))
 
         for i in range(n_samples):
@@ -112,6 +111,7 @@ if __name__ == "__main__":
     parser.add_argument("epochs", type=int)
     cargs = parser.parse_args()
 
+    # SimpleNamespaces are cool! Loose wrapper of dict that allow dot access
     args = SimpleNamespace(num_epochs=cargs.epochs, batch_size=64)
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -126,14 +126,10 @@ if __name__ == "__main__":
     model = Autoencoder()
     model.to(device)
     distance = nn.MSELoss()
-    #distance = nn.BCELoss()
-    #distance = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-    #optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
     for epoch in range(args.num_epochs):
-        # Train
         train(model, train_loader)
     eval(model)
 
-    torch.save(model.state_dict(), "ood_detector.pt")
+    torch.save(model.state_dict(), "models/ood_detector.pt")
