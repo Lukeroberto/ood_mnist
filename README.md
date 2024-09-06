@@ -13,7 +13,7 @@ Examples:
 
 Training of Autoencoder: 
 
-![](training.png)
+![](examples/training.png)
 
 Example of lookup of nearest image to drawn one:
-![](ex_infer.png)
+![](examples/ex_infer.png)
