@@ -7,3 +7,13 @@ Usage:
 >> python convert_paint.py /path/to/image/ # if the image is hand-drawn
 >> python train.py # train model and save locally
 >> python infer.py /path/to/examples /path/to/converted/image # run model inference and return representative or OOD
+
+
+Examples:
+
+Training of Autoencoder: 
+
+![](training.png)
+
+Example of lookup of nearest image to drawn one:
+![](ex_infer.png)
