@@ -6,17 +6,19 @@ import matplotlib.pyplot as plt
 
 def png_to_mnist_tensor(image_path):
     # Open the image
-    img = Image.open(image_path)
+    img = Image.open(image_path).convert('L')
 
     # Define the transformation pipeline
     transform = transforms.Compose([
-        transforms.Grayscale(),  # Convert to grayscale
         transforms.Resize((28, 28)),  # Resize to 28x28 pixels
         transforms.ToTensor(),  # Convert to tensor and normalize to [0, 1]
+        transforms.Normalize((0.5,), (0.5,))  # Normalize to [-1, 1]
     ])
 
     # Apply the transformations
     tensor = transform(img)
+    if tensor.mean() > 0:
+        tensor = 1 - tensor
 
     # Ensure the tensor is of shape [1, 28, 28]
     tensor = tensor.squeeze()  # Remove any extra dimensions
